@@ -2,7 +2,7 @@
 const defaultContent = {
     hero: {
         title: "Kimchay",
-        subtitle: "A Filipino Twist on a Korean Classic",
+        subtitle: "Traditional meets Innovation",
         description: "Reinterpreting the famous Korean Kimchi using locally grown Tagalog Pechay. It's the familiar taste of fermentation with a unique Filipino soul.",
         buttonText: "Taste the Tradition",
         image: "assets/hero.png"

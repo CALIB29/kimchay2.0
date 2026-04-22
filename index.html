@@ -8,19 +8,101 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <style>
         :root {
             --primary: #1a472a;
-            --secondary: #c62828;
-            --accent: #ffb300;
-            --surface: #0a0a0a;
+            --secondary: #c53030;
+            --accent: #f6ad55;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
-        body { font-family: 'Outfit', sans-serif; scroll-behavior: smooth; background-color: #fcfcfc; }
         
-        .enterprise-nav { background: rgba(255, 255, 255, 0.7); backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0,0,0,0.05); }
-        .hero-title { letter-spacing: -0.05em; line-height: 0.9; }
+        /* Only hide native cursor on desktop/mouse devices when moving */
+        @media (pointer: fine) {
+            body.has-moved * { cursor: none !important; }
+        }
+        
+        .custom-cursor, .cursor-follower {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        body.has-moved .custom-cursor, body.has-moved .cursor-follower {
+            opacity: 1;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        .custom-cursor {
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-follower {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.2s ease, width 0.3s, height 0.3s;
+        }
+
+        /* Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .enterprise-glass, .enterprise-nav {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hero Text Gradient */
+        .hero-gradient-text {
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.4) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Premium Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0c0c0c; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.5s ease;
+        }
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-10px);
+        }
         
         .card-modern { 
             background: white;
@@ -54,11 +136,10 @@
             <img src="assets/logo.png" alt="Kimchay" class="h-10">
             <span class="text-xl font-bold tracking-tighter uppercase text-stone-900">Kimchay<span class="text-primary">.</span></span>
         </div>
-        <div class="hidden md:flex gap-12 text-stone-600 font-semibold text-sm uppercase tracking-widest">
+        <div class="hidden md:flex gap-12 text-stone-600 font-semibold text-sm uppercase tracking-widest items-center">
             <a href="#about" class="hover:text-primary transition">Philosophy</a>
             <a href="#flavors" class="hover:text-primary transition">Product Line</a>
             <a href="#sustainability" class="hover:text-primary transition">Our Impact</a>
-            <a href="#order" class="bg-primary text-white px-8 py-3 rounded-full hover:shadow-xl transition-all btn-enterprise">Partner With Us</a>
         </div>
     </nav>
 
@@ -73,7 +154,7 @@
                 <span class="inline-block px-4 py-1 bg-primary/20 text-primary border border-primary/30 rounded-full text-xs font-bold uppercase tracking-widest mb-6">Filipino Agricultural Innovation</span>
                 <h1 id="hero-title" class="hero-title text-7xl md:text-9xl font-bold text-white mb-8">Kimchay</h1>
                 <p id="hero-subtitle" class="text-2xl text-stone-300 mb-8 font-light leading-snug">
-                    Redefining traditional fermentation through local Tagalog Pechay.
+                    Traditional meets Innovation
                 </p>
                 <div class="flex gap-4 justify-end">
                     <a href="#flavors" class="bg-white text-stone-900 px-10 py-5 rounded-sm font-bold text-sm uppercase tracking-tighter hover:bg-stone-200 transition shadow-2xl">View Catalog</a>
@@ -84,7 +165,7 @@
     </section>
 
     <!-- Impact/About -->
-    <section id="about" class="py-32 px-6 md:px-16 bg-white overflow-hidden">
+    <section id="about" class="py-32 px-6 md:px-16 bg-white overflow-hidden reveal">
         <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-24 items-center">
             <div class="relative">
                 <div class="absolute -top-12 -left-12 w-64 h-64 bg-primary/5 rounded-full blur-3xl"></div>
@@ -113,7 +194,7 @@
     </section>
 
     <!-- Product Grid -->
-    <section id="flavors" class="py-32 px-6 md:px-16 bg-stone-50">
+    <section id="flavors" class="py-32 px-6 md:px-16 bg-stone-50 reveal">
         <div class="max-w-7xl mx-auto">
             <div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
                 <div class="max-w-xl">
@@ -173,7 +254,7 @@
     </section>
 
     <!-- Impact & Sustainability -->
-    <section id="sustainability" class="py-32 px-6 md:px-16 bg-primary text-white">
+    <section id="sustainability" class="py-32 px-6 md:px-16 bg-primary text-white reveal">
         <div class="max-w-7xl mx-auto">
             <div class="grid lg:grid-cols-3 gap-16">
                 <div class="lg:col-span-1">
@@ -202,18 +283,6 @@
         </div>
     </section>
 
-    <!-- Channel Partners -->
-    <section id="order" class="py-24 px-6 md:px-16 bg-stone-900 text-white">
-        <div class="max-w-7xl mx-auto border-t border-white/5 pt-24 text-center">
-            <h3 class="text-stone-400 uppercase tracking-[0.5em] text-[10px] font-black mb-12">Authorized Distribution Channels</h3>
-            <div class="flex flex-wrap justify-center gap-16 opacity-30 hover:opacity-100 transition-opacity duration-1000">
-                <span class="text-sm font-black uppercase tracking-widest">E-Commerce Platforms</span>
-                <span class="text-sm font-black uppercase tracking-widest">Korean Specialized Marts</span>
-                <span class="text-sm font-black uppercase tracking-widest">Premium Food Bazaars</span>
-                <span class="text-sm font-black uppercase tracking-widest">Enterprise Canteens</span>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="bg-stone-900 text-white py-12 px-6 md:px-16 border-t border-white/5">
@@ -257,6 +326,51 @@
         }
         initPage();
 
+        // Reveal Animations on Scroll
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 150;
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+        window.addEventListener("scroll", reveal);
+        reveal(); // Run on load
+
+        // Custom Cursor Logic
+        const cursor = document.querySelector('.custom-cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        document.addEventListener('mousemove', (e) => {
+            document.body.classList.add('has-moved');
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+            
+            setTimeout(() => {
+                follower.style.left = e.clientX - 10 + 'px';
+                follower.style.top = e.clientY - 10 + 'px';
+            }, 50);
+        });
+
+        // Interactive Cursor scaling
+        document.querySelectorAll('a, button, input').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                follower.style.width = '80px';
+                follower.style.height = '80px';
+                follower.style.transform = 'translate(-20px, -20px)';
+                follower.style.background = 'rgba(26, 71, 42, 0.1)';
+            });
+            el.addEventListener('mouseleave', () => {
+                follower.style.width = '40px';
+                follower.style.height = '40px';
+                follower.style.transform = 'translate(0, 0)';
+                follower.style.background = 'transparent';
+            });
+        });
         // Secret Trigger: Double click the footer logo to access editor
         const footerLogo = document.getElementById('footer-logo');
         if (footerLogo) {
